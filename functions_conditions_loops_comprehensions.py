@@ -444,7 +444,116 @@ list(map(lambda x: x ** 2 / 100 + x, salaries))
 list_store = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 list(filter(lambda x: x % 2 == 0, list_store))
 
-#reduce: indirgemek demek
+# reduce: indirgemek demek
 from functools import reduce
+
 list_store = [1, 2, 3, 4]
-reduce(lambda a,b: a+b, list_store)
+reduce(lambda a, b: a + b, list_store)
+
+############################################################
+# COMPREHENSIONS: birden fazla satırla yapılacak kodları tek satırda yapılan işlemlerdir.
+############################################################
+
+############################################################
+# List COMPREHENSIONS
+############################################################
+
+salaries = [1000, 2000, 3000, 4000, 5000]
+
+
+def new_salary(x):
+    return int(x * 20 / 100 + x);
+
+
+null_list = []
+for salary in salaries:
+    if salary > 3000:
+        null_list.append(new_salary(salary))
+    else:
+        null_list.append(new_salary(salary * 2))
+print(null_list)
+
+# Yukarıdaki işlemin tek satırda yapıldı. comprehention yapılarında if else birlikte kullanılacaksa aşağıfaki gibi
+[new_salary(salary * 2) if salary < 3000 else new_salary(salary) for salary in salaries]
+
+[salary * 2 for salary in salaries]
+# sadece if yapısı kullanılacaksa aşağıdaki gibi kullanılır
+[salary * 2 for salary in salaries if salary < 3000]
+[new_salary(salary * 2) if salary < 3000 else new_salary(salary * 0.2) for salary in salaries]
+
+students = ["Ömer", "Gündoğdu", "Fatih", "Sultan", "Mehmet"]
+students_no = ["Rıza", "Mehmet"]
+[student.lower() if student in students_no else student.upper() for student in students]
+
+############################################################
+# Dict COMPREHENSIONS
+############################################################
+
+dictionary = {
+    'a': 1,
+    'b': 2,
+    'c': 3,
+    'd': 4
+}
+
+dictionary.keys()
+dictionary.values()
+dictionary.items()
+
+{k: v ** 2 for (k, v) in dictionary.items()}
+{k.upper(): v ** 2 for (k, v) in dictionary.items()}
+{k.upper(): v * 2 for (k, v) in dictionary.items()}
+
+# Example: Çift sayıların karesi alınarak sözlüğe naısl ekleriz
+# keyler: orjinal, valueler: değiştirilecek değerler
+numbers = range(10)
+new_dict = {}
+
+for n in numbers:
+    if n % 2 == 0:
+        new_dict[n] = n ** 2
+
+{n: n ** 2 for n in numbers if n % 2 == 0}
+
+# uygulama - 1
+# Bir veri setindeki değişken isimlerini değiştirmek
+import seaborn as sns
+df = sns.load_dataset('car_crashes')
+
+# ilk çözüm
+A = []
+for col in df.columns:
+    A.append(col.upper())
+df.columns = A
+
+# comprehension kullanarak çözüm
+df.columns = [col.upper() for col in df.columns]
+
+# uygulama-2
+# isminde "INS" olan değişkenlerin başına FLAG diğerlerine NO_FLAG eklemek istiyoruz.
+df.columns=["FLAG_" + col if "INS" in col else "NO_FLAG_" + col for col in df.columns]
+
+
+# uygulama-3
+#key'i string, value'si liste olan, liste içerisinde fonksiyon isimleri yeralacak
+import seaborn as sns
+df = sns.load_dataset('car_crashes')
+df.columns
+
+#burada ne kadar low level çalışılabiliryorsa programcılık yetenekleri yüksekter.
+#Bir data frame içerisindeki sayısal değişkenler seçildi.
+num_cols = [col for col in df.columns if df[col].dtype != "O"] # eşit değildir object****
+soz ={}
+
+agg_list = ["mean","min","max","sum"]
+
+for col in num_cols:
+    soz[col] = agg_list
+
+#dict comprehensions
+new_dict = {col:agg_list for col in num_cols}
+df.head()
+df[num_cols].head()
+df[num_cols].agg(new_dict)#burada aggrigation fun kullanarak dataframe
+# içerisinde new_dict içerisindeki özel tanımlı fonksiyonlara göre işlem yapbilir
+
